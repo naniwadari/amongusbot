@@ -17,7 +17,7 @@ export interface GameMember {
 }
 
 export enum GameStatusList {
-  play_now = "ゲーム中",
+  play_now = "ゲーム中(ゲーム中は配られたルールが非表示になります)",
   end = "ゲーム終了"
 }
 
