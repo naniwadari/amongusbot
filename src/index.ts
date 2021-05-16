@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 import { Game } from './games/GameInterface'
 import { RandomGame } from './games/RandomGame'
 import { RoleGame } from './games/RoleGame'
+import { KyojinGame } from './games/KyojinGame'
 
 //環境変数の読み込み
 dotenv.config()
@@ -23,17 +24,31 @@ client.on('message', async (msg: Message) => {
   //狂人を一人だけ入れる
   if (msg.content === `${command} kyojin`) {
     const channel_id = msg.member?.voice.channelID
-    if (channel_id) {
-      const voice_ch = msg?.guild?.channels?.cache.get(channel_id)
-      const target_member_id = getRandomMemberId(voice_ch?.members)
-      sendDM(client, target_member_id, "あなたは狂人です。インポスターの場合は無視してください。")
-      console.log("送信成功")
-    } else {
+    if (channel_id == null) {
       msg.channel.send("ボイスチャンネルに誰も参加していません！")
-      console.log("送信失敗")
       return
     }
-    msg.channel.send("DMを送りました！")
+    const members = msg?.guild?.channels?.cache.get(channel_id)?.members
+    if (members !== undefined) {
+      game = undefined
+      game = new KyojinGame(members)
+      game.getGameMembers().forEach(game_member => {
+        const is_kyojin = KyojinGame.isKyojin(game_member)
+        if (is_kyojin) {
+          sendDM(client, game_member.member.id, "あなたは狂人です(インポスターの場合は無視してください)")
+        }
+      })
+      const fields = game.getEmbedFields()
+      const embed = new MessageEmbed({
+        color: 16757683,
+        fields: fields
+      })
+      if (active_msg === undefined) {
+        active_msg = await msg.channel.send(embed)
+      } else {
+        active_msg.edit(embed)
+      }
+    }
   }
   //ランダム制約スタート
   if (msg.content === `${command} random`) {
