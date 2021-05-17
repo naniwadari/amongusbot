@@ -77,7 +77,7 @@ export class KyojinGame implements Game {
     const game_members = this.members.map((member, key) => {
       const game_member: GameMember = {
         member: member,
-        content: key === random_key ? new Kyojin(KyojinRole.kyojin.id, KyojinRole.kyojin.content) : new Kyojin(KyojinRole.normal.id, KyojinRole.kyojin.content)
+        content: key === random_key ? new Kyojin(KyojinRole.kyojin.id, KyojinRole.kyojin.content) : new Kyojin(KyojinRole.normal.id, KyojinRole.normal.content)
       }
       return game_member
     })
