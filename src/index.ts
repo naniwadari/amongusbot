@@ -48,6 +48,9 @@ client.on('message', async (msg: Message) => {
       active_msg?.react(stamp.emoji)
     })
     client.on('messageReactionAdd', (reaction, user) => {
+      if (reaction.message.id !== active_msg?.id) {
+        return
+      }
       const bot_id = '839341219783114793'
       if (user.id !== bot_id) {
         switch(reaction.emoji.name) {
@@ -62,6 +65,8 @@ client.on('message', async (msg: Message) => {
             break
           case stamps[3].emoji:
             endGame(msg)
+            break
+          default:
             break
         }
         reaction.users.remove(user.id)
